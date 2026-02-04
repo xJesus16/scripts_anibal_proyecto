@@ -57,7 +57,7 @@
         </header>
         <!-- Seccion de la gestion de la orden -->
         <div id="app" class="gap-1 px-6 flex flex-1 justify-center py-5">
-           @{{categoria_seleccionada}}
+           <!-- @{{tamanios}} -->
           <div class="layout-content-container flex flex-col max-w-[920px] flex-1">
             <div class="flex flex-wrap justify-between gap-3 p-4"><p class="text-[#181511] tracking-light text-[32px] font-bold leading-tight min-w-72">New Order</p></div>
             <div class="pb-3">
@@ -109,7 +109,7 @@
                 <p class="text-[#181511] text-base font-medium leading-normal line-clamp-1">@{{item.nombre}}</p>
                 <p class="text-[#897961] text-sm font-normal leading-normal line-clamp-2">@{{item.descripcion}}</p>
               </div>
-              <div class="shrink-0"><p class="text-[#181511] text-base font-normal leading-normal">$@{{item.precio}}</p></div>
+              <div class="shrink-0"><p class="text-[#181511] text-base font-normal leading-normal">$@{{item.precio}}</p> @{{item.tamanio}}</div>
             </div>
             <div class="@container">
   <div class="px-4">
@@ -291,7 +291,21 @@
               } 
                      ,methods:{
                       agregar_orden:function(item){
-                        this.orden.push(item);
+                        //this.orden.push(item);
+
+                        this.orden.push({
+                          id:item.id
+                          ,nombre:item.nombre
+                          ,precio:item.precio
+                          ,descripcion:item.descripcion
+                          ,tamanio:1
+                        });
+
+                        //this.orden.push({
+                          //tamanio:1
+                          //,...item
+                        //});
+
                       }
                      }
                       ,created(){

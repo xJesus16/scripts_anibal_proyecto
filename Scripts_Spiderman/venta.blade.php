@@ -58,11 +58,11 @@
         <!-- Seccion de la gestion de la orden -->
         <div id="app" class="gap-1 px-6 flex flex-1 justify-center py-5">
            <!-- @{{tamanios}} -->
-          <div class="layout-content-container flex flex-col max-w-[920px] flex-1">
-            <div class="flex flex-wrap justify-between gap-3 p-4"><p class="text-[#181511] tracking-light text-[32px] font-bold leading-tight min-w-72">New Order</p></div>
-            <div class="pb-3">
+          <div  class="layout-content-container flex flex-col max-w-[920px] flex-1">
+            <div v-if="!extras" class="flex flex-wrap justify-between gap-3 p-4"><p class="text-[#181511] tracking-light text-[32px] font-bold leading-tight min-w-72">New Order</p></div>
+            <div v-if="!extras" class="pb-3">
               <div class="flex border-b border-[#e6e1db] px-4 gap-8">
-               <a v-for="categoria in categorias" 
+               <a  v-for="categoria in categorias" 
                @click="categoria_seleccionada=categoria.id"
                :class="{'border-b-[3px]':categoria.id==categoria_seleccionada,'border-b-[#181511]':categoria.id==categoria_seleccionada}"
                class="flex flex-col items-center justify-center  text-[#181511] pb-[13px] pt-4" href="#">
@@ -76,8 +76,8 @@
                 </a>-->
               </div>
             </div>
-            <h3 class="text-[#181511] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4"> @{{nomcategoria}} </h3>
-            <div v-for="producto in productos_seleccionados" class="p-4">
+            <h3 v-if="!extras" class="text-[#181511] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4"> @{{nomcategoria}} </h3>
+            <div v-if="!extras" v-for="producto in productos_seleccionados" class="p-4">
               <div class="flex items-stretch justify-between gap-4 rounded-lg">
                 <div class="flex flex-[2_2_0px] flex-col gap-4">
                   <div class="flex flex-col gap-1">
@@ -102,34 +102,52 @@
             
            
           </div>
-          <div class="layout-content-container flex flex-col w-[360px]">
+          <div v-if="!extras" class="layout-content-container flex flex-col w-[360px]">
             <h2 class="text-[#181511] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Order Summary</h2>
-            <div v-for="item in orden" class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2 justify-between">
+            <div v-for="(item,index) in orden" class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2 justify-between">
               <div class="flex flex-col justify-start">
                 <p class="text-[#181511] text-base font-medium leading-normal line-clamp-1">@{{item.nombre}}</p>
                 <p class="text-[#897961] text-sm font-normal leading-normal line-clamp-2">@{{item.descripcion}}</p>
               </div>
-              <div class="shrink-0"><p class="text-[#181511] text-base font-normal leading-normal">$@{{item.precio}}</p> @{{item.tamanio}}</div>
+              <div class="shrink-0"><p class="text-[#181511] text-base font-normal leading-normal">$@{{item.precio}}</p> </div>
+              <div class="flex flex-col">
+                <span>Tamaño</span>
+                <div>
+                <select v-model="item.tamanio" name="size_item_1" class="form-select h-9 rounded-md border border-[#e6e1db] bg-white text-sm text-[#181511] px-3 pr-10 min-w-[180px]" >
+                  <option v-for="tamanio in tamanios" :value="tamanio.id">@{{tamanio.nombre}}</option>
+                </select>
+              </div>
             </div>
-            <div class="@container">
+            <div>
+                  <button @click="extras=true">Extras</button>
+                </div>
+                <div>
+                  <button @click="eliminar_orden(index)">Eliminar</button>
+                </div>
+                
+           </div>
+
+     <div class="@container">
   <div class="px-4">
     <!-- Línea única: tamaño | (espacio) | acciones -->
     <div class="flex items-center justify-between gap-3">
       <!-- Left: etiqueta + select -->
       <div class="flex flex-col  items-start gap-2">
-        <p class="text-sm text-[#897961] min-w-[72px]">Tamaño</p>
+        <!-- <p class="text-sm text-[#897961] min-w-[72px]">Tamaño</p>
         <select name="size_item_1" class="form-select h-9 rounded-md border border-[#e6e1db] bg-white text-sm text-[#181511] px-3 pr-10 min-w-[180px]">
           <option value="small">Small (S)</option>
           <option value="medium" selected>Medium (M)</option>
-          <option value="large">Large (L)</option>
+          <option value="large">Large (L)</option> -->
         </select>
       </div>
 
+
       <!-- Right: botones eliminar y configurar (misma línea) -->
       <div class="flex items-center gap-3">
-        <button class="flex items-center justify-center w-9 h-9 rounded-md bg-white border border-[#e6e1db] hover:bg-[#fff7f0]" aria-label="Eliminar item">
+        
+        <!-- <button @click="eliminar_orden(index)" class="flex items-center justify-center w-9 h-9 rounded-md bg-white border border-[#e6e1db] hover:bg-[#fff7f0]" aria-label="Eliminar item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path></svg>
-        </button>
+        </button> -->
 
         <button class="flex items-center gap-2 px-3 h-9 rounded-md bg-[#f4f3f0] hover:bg-[#e6e1db]" aria-label="Configurar adicionales">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 -960 960 960" fill="#5f6368"><path d="M427-120v-225h60v83h353v60H487v82h-60Zm-307-82v-60h247v60H120Zm187-166v-82H120v-60h187v-84h60v226h-60Zm120-82v-60h413v60H427Zm166-165v-225h60v82h187v60H653v83h-60Zm-473-83v-60h413v60H120Z"></path></svg>
@@ -203,6 +221,7 @@
             </div>
             <div class="flex px-4 py-3">
               <button
+              @click="guardar_orden"
                 class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 flex-1 bg-[#ec9213] text-[#181511] text-sm font-bold leading-normal tracking-[0.015em]"
               >
                 <span class="truncate">Complete Order</span>
@@ -229,6 +248,7 @@
                    ,tamanios:[]
                    ,categoria_seleccionada:1
                    ,impuesto:.16
+                   ,extras:false
                    
                              
               }
@@ -307,11 +327,51 @@
                         //});
 
                       }
+
+                      ,eliminar_orden:function(index){
+                        this.orden.splice(index,1);
+                      }
+
+                      ,guardar_orden:function(){
+                            var self=this;
+                            //El objetivo XMLHttpRequest es el encargado de hacer las peticiones asincronas 
+                            var xhr = new XMLHttpRequest();
+                          //Aqui se abre la conexion, se indica a que URL (ruta)se va a acceder
+                          //Y si se va a utilizar GET o POST
+                          xhr.open('POST', '/api/venta/save', true);
+                          //Se hace esta linea para indicar a Javascript que este pendiente
+                          //cuando el estado de la peticion cambie
+                          //xhr.onreadystatechange =  function(){
+                          //En esta linea preguntamos si la conexion se ha terminado
+                              //if (this.readyState == 4){
+                                //Es que el resultado de la conexion sea exitoso
+                                //if (this.status == 200){
+                                    //En esta variable se encuentra el contenido de la respuesta
+                                    //Que viene del backend this.responseText
+                                  //  info=JSON.parse(this.responseText);
+                                    //console.log(info);
+                                    //for(e=0;e<info.length;e++){
+                                      //self.productos.push(info[e]); 
+                                      //console.log(self.productos);
+                                    //}
+
+                           // }
+                           // else{
+                               // alert('Algo salio mal');
+                            //}
+                        //}
+                        //}
+                      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                      xhr.send(JSON.stringify(this.orden));
+
+
+                      }
+
                      }
                       ,created(){
-                    var self=this;
-                    //El objetivo XMLHttpRequest es el encargado de hacer las peticiones asincronas 
-                    var xhr = new XMLHttpRequest();
+                      var self=this;
+                      //El objetivo XMLHttpRequest es el encargado de hacer las peticiones asincronas 
+                      var xhr = new XMLHttpRequest();
                     //Aqui se abre la conexion, se indica a que URL (ruta)se va a acceder
                     //Y si se va a utilizar GET o POST
                     xhr.open('GET', '{{route("productos")}}', true);
